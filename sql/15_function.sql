@@ -5,6 +5,13 @@
 CREATE OR REPLACE FUNCTION category_counts_by_language(TEXT) RETURNS TABLE(name TEXT, count BIGINT) AS
 $$
 -- FIXME: implementation goes here
+select category.name, count(category.name)
+from category
+join film_category on category.category_id = film_category.category_id
+join film on film_category.film_id = film.film_id
+join language on film.language_id = language.language_id
+where language.name ilike '%' || $1 || '%'
+group by category.name, language.name;
 $$
 LANGUAGE SQL
 IMMUTABLE
